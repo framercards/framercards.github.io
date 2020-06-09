@@ -1,208 +1,242 @@
-/*
-	Paradigm Shift by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
-*/
+(function ($)
+  { "use strict"
+  
+/* 1. Proloder */
+    $(window).on('load', function () {
+      $('#preloader-active').delay(450).fadeOut('slow');
+      $('body').delay(450).css({
+        'overflow': 'visible'
+      });
+    });
 
-(function($) {
 
-	var	$window = $(window),
-		$body = $('body');
+/* 2. slick Nav */
+// mobile_menu
+    var menu = $('ul#navigation');
+    if(menu.length){
+      menu.slicknav({
+        prependTo: ".mobile_menu",
+        closedSymbol: '+',
+        openedSymbol:'-'
+      });
+    };
 
-	// Breakpoints.
-		breakpoints({
-			default:   ['1681px',   null       ],
-			xlarge:    ['1281px',   '1680px'   ],
-			large:     ['981px',    '1280px'   ],
-			medium:    ['737px',    '980px'    ],
-			small:     ['481px',    '736px'    ],
-			xsmall:    ['361px',    '480px'    ],
-			xxsmall:   [null,       '360px'    ]
-		});
 
-	// Play initial animations on page load.
-		$window.on('load', function() {
-			window.setTimeout(function() {
-				$body.removeClass('is-preload');
-			}, 100);
-		});
+/* 3. MainSlider-1 */
+    function mainSlider() {
+      var BasicSlider = $('.slider-active');
+      BasicSlider.on('init', function (e, slick) {
+        var $firstAnimatingElements = $('.single-slider:first-child').find('[data-animation]');
+        doAnimations($firstAnimatingElements);
+      });
+      BasicSlider.on('beforeChange', function (e, slick, currentSlide, nextSlide) {
+        var $animatingElements = $('.single-slider[data-slick-index="' + nextSlide + '"]').find('[data-animation]');
+        doAnimations($animatingElements);
+      });
+      BasicSlider.slick({
+        autoplay: false,
+        autoplaySpeed: 10000,
+        dots: false,
+        fade: true,
+        arrows: true,
+        prevArrow: '<button type="button" class="slick-prev"><i class="ti-shift-left"></i></button>',
+        nextArrow: '<button type="button" class="slick-next"><i class="ti-shift-right"></i></button>',
+        responsive: [{
+            breakpoint: 1024,
+            settings: {
+              slidesToShow: 1,
+              slidesToScroll: 1,
+              infinite: true,
+            }
+          },
+          {
+            breakpoint: 991,
+            settings: {
+              slidesToShow: 1,
+              slidesToScroll: 1,
+              arrows: false
+            }
+          },
+          {
+            breakpoint: 767,
+            settings: {
+              slidesToShow: 1,
+              slidesToScroll: 1,
+              arrows: false
+            }
+          }
+        ]
+      });
 
-	// Hack: Enable IE workarounds.
-		if (browser.name == 'ie')
-			$body.addClass('is-ie');
+      function doAnimations(elements) {
+        var animationEndEvents = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
+        elements.each(function () {
+          var $this = $(this);
+          var $animationDelay = $this.data('delay');
+          var $animationType = 'animated ' + $this.data('animation');
+          $this.css({
+            'animation-delay': $animationDelay,
+            '-webkit-animation-delay': $animationDelay
+          });
+          $this.addClass($animationType).one(animationEndEvents, function () {
+            $this.removeClass($animationType);
+          });
+        });
+      }
+    }
+    mainSlider();
 
-	// Mobile?
-		if (browser.mobile)
-			$body.addClass('is-mobile');
 
-	// Scrolly.
-		$('.scrolly')
-			.scrolly({
-				offset: 100
-			});
 
-	// Polyfill: Object fit.
-		if (!browser.canUse('object-fit')) {
+/* 4. Testimonial Active*/
+  var testimonial = $('.h1-testimonial-active');
+    if(testimonial.length){
+    testimonial.slick({
+        dots: false,
+        infinite: true,
+        speed: 1000,
+        autoplay:false,
+        loop:true,
+        arrows: true,
+        prevArrow: '<button type="button" class="slick-prev"><i class="ti-angle-left"></i></button>',
+        nextArrow: '<button type="button" class="slick-next"><i class="ti-angle-right"></i></button>',
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        responsive: [
+          {
+            breakpoint: 1024,
+            settings: {
+              slidesToShow: 1,
+              slidesToScroll: 1,
+              infinite: true,
+              dots: false,
+              arrow:false
+            }
+          },
+          {
+            breakpoint: 600,
+            settings: {
+              slidesToShow: 1,
+              slidesToScroll: 1,
+              arrows:false
+            }
+          },
+          {
+            breakpoint: 480,
+            settings: {
+              slidesToShow: 1,
+              slidesToScroll: 1,
+              arrows:false,
+            }
+          }
+        ]
+      });
+    }
 
-			$('.image[data-position]').each(function() {
 
-				var $this = $(this),
-					$img = $this.children('img');
+/* 5. Gallery Active */
+    var client_list = $('.completed-active');
+    if(client_list.length){
+      client_list.owlCarousel({
+        slidesToShow: 2,
+        slidesToScroll: 1,
+        loop: true,
+        autoplay:true,
+        speed: 3000,
+        smartSpeed:2000,
+        nav: false,
+        dots: false,
+        margin: 15,
 
-				// Apply img as background.
-					$this
-						.css('background-image', 'url("' + $img.attr('src') + '")')
-						.css('background-position', $this.data('position'))
-						.css('background-size', 'cover')
-						.css('background-repeat', 'no-repeat');
+        autoplayHoverPause: true,
+        responsive : {
+          0 : {
+            items: 1
+          },
+          768 : {
+            items: 2
+          },
+          992 : {
+            items: 2
+          },
+          1200:{
+            items: 3
+          }
+        }
+      });
+    }
 
-				// Hide img.
-					$img
-						.css('opacity', '0');
 
-			});
+/* 6. Nice Selectorp  */
+  var nice_Select = $('select');
+    if(nice_Select.length){
+      nice_Select.niceSelect();
+    }
 
-			$('.gallery > a').each(function() {
+/* 7.  Custom Sticky Menu  */
+    $(window).on('scroll', function () {
+      var scroll = $(window).scrollTop();
+      if (scroll < 245) {
+        $(".header-sticky").removeClass("sticky-bar");
+      } else {
+        $(".header-sticky").addClass("sticky-bar");
+      }
+    });
 
-				var $this = $(this),
-					$img = $this.children('img');
+    $(window).on('scroll', function () {
+      var scroll = $(window).scrollTop();
+      if (scroll < 245) {
+          $(".header-sticky").removeClass("sticky");
+      } else {
+          $(".header-sticky").addClass("sticky");
+      }
+    });
 
-				// Apply img as background.
-					$this
-						.css('background-image', 'url("' + $img.attr('src') + '")')
-						.css('background-position', 'center')
-						.css('background-size', 'cover')
-						.css('background-repeat', 'no-repeat');
 
-				// Hide img.
-					$img
-						.css('opacity', '0');
 
-			});
+/* 8. sildeBar scroll */
+    $.scrollUp({
+      scrollName: 'scrollUp', // Element ID
+      topDistance: '300', // Distance from top before showing element (px)
+      topSpeed: 300, // Speed back to top (ms)
+      animation: 'fade', // Fade, slide, none
+      animationInSpeed: 200, // Animation in speed (ms)
+      animationOutSpeed: 200, // Animation out speed (ms)
+      scrollText: '<i class="ti-arrow-up"></i>', // Text for element
+      activeOverlay: false, // Set CSS color to display scrollUp active point, e.g '#00FFFF'
+    });
 
-		}
 
-	// Gallery.
-		$('.gallery')
-			.on('click', 'a', function(event) {
+/* 9. data-background */
+    $("[data-background]").each(function () {
+      $(this).css("background-image", "url(" + $(this).attr("data-background") + ")")
+      });
 
-				var $a = $(this),
-					$gallery = $a.parents('.gallery'),
-					$modal = $gallery.children('.modal'),
-					$modalImg = $modal.find('img'),
-					href = $a.attr('href');
 
-				// Not an image? Bail.
-					if (!href.match(/\.(jpg|gif|png|mp4)$/))
-						return;
+/* 10. WOW active */
+    new WOW().init();
 
-				// Prevent default.
-					event.preventDefault();
-					event.stopPropagation();
+/* 11. Datepicker */
+    
+// 11. ---- Mailchimp js --------//  
+    function mailChimp() {
+      $('#mc_embed_signup').find('form').ajaxChimp();
+    }
+    mailChimp();
 
-				// Locked? Bail.
-					if ($modal[0]._locked)
-						return;
 
-				// Lock.
-					$modal[0]._locked = true;
+// 12 Pop Up Img
+    var popUp = $('.single_gallery_part, .img-pop-up');
+      if(popUp.length){
+        popUp.magnificPopup({
+          type: 'image',
+          gallery:{
+            enabled:true
+          }
+        });
+      }
 
-				// Set src.
-					$modalImg.attr('src', href);
 
-				// Set visible.
-					$modal.addClass('visible');
 
-				// Focus.
-					$modal.focus();
-
-				// Delay.
-					setTimeout(function() {
-
-						// Unlock.
-							$modal[0]._locked = false;
-
-					}, 600);
-
-			})
-			.on('click', '.modal', function(event) {
-
-				var $modal = $(this),
-					$modalImg = $modal.find('img');
-
-				// Locked? Bail.
-					if ($modal[0]._locked)
-						return;
-
-				// Already hidden? Bail.
-					if (!$modal.hasClass('visible'))
-						return;
-
-				// Stop propagation.
-					event.stopPropagation();
-
-				// Lock.
-					$modal[0]._locked = true;
-
-				// Clear visible, loaded.
-					$modal
-						.removeClass('loaded')
-
-				// Delay.
-					setTimeout(function() {
-
-						$modal
-							.removeClass('visible')
-
-						setTimeout(function() {
-
-							// Clear src.
-								$modalImg.attr('src', '');
-
-							// Unlock.
-								$modal[0]._locked = false;
-
-							// Focus.
-								$body.focus();
-
-						}, 475);
-
-					}, 125);
-
-			})
-			.on('keypress', '.modal', function(event) {
-
-				var $modal = $(this);
-
-				// Escape? Hide modal.
-					if (event.keyCode == 27)
-						$modal.trigger('click');
-
-			})
-			.on('mouseup mousedown mousemove', '.modal', function(event) {
-
-				// Stop propagation.
-					event.stopPropagation();
-
-			})
-			.prepend('<div class="modal" tabIndex="-1"><div class="inner"><img src="" /></div></div>')
-				.find('img')
-					.on('load', function(event) {
-
-						var $modalImg = $(this),
-							$modal = $modalImg.parents('.modal');
-
-						setTimeout(function() {
-
-							// No longer visible? Bail.
-								if (!$modal.hasClass('visible'))
-									return;
-
-							// Set loaded.
-								$modal.addClass('loaded');
-
-						}, 275);
-
-					});
 
 })(jQuery);
